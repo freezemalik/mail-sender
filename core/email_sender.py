@@ -19,7 +19,7 @@ from jinja2 import Template
 
 
 class QQEmailSender:
-    def __init__(self, config_file='../config/email_config.json'):
+    def __init__(self, config_file='config/email_config.json'):
         """
         使用配置文件初始化邮件发送器
         """
@@ -39,11 +39,18 @@ class QQEmailSender:
             raise ValueError("QQ号码应在6到13位之间")
         
         # 初始化日志文件
-        if not os.path.exists("../data/email_log.txt"):
-            with open("../data/email_log.txt", "w") as log_file:
+        self._initialize_log_file()
+
+    def _initialize_log_file(self):
+        """
+        初始化日志文件
+        """
+        if not os.path.exists("logs/email_log.txt"):
+            os.makedirs(os.path.dirname("logs/email_log.txt"), exist_ok=True)
+            with open("logs/email_log.txt", "w") as log_file:
                 log_file.write("邮件发送日志\n===============\n\n")
 
-    def load_email_template(self, template_file='../templates/email_template.html'):
+    def load_email_template(self, template_file='templates/email_template.html'):
         """
         加载HTML邮件模板
         """
@@ -178,7 +185,7 @@ class QQEmailSender:
         status = "成功" if success else "失败"
         log_entry = f"[{timestamp}] [{status}] {email}: {message}\n"
         
-        with open("../data/email_log.txt", "a", encoding="utf-8") as log_file:
+        with open("logs/email_log.txt", "a", encoding="utf-8") as log_file:
             log_file.write(log_entry)
     
     def send_bulk_emails(self):
@@ -232,5 +239,5 @@ class QQEmailSender:
         # 总结日志
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         summary = f"\n[{timestamp}] 总结: 总计={self.end_id - self.start_id + 1}, 成功={successful_sends}, 失败={failed_sends}, 跳过={skipped_emails}\n"
-        with open("../data/email_log.txt", "a", encoding="utf-8") as log_file:
+        with open("logs/email_log.txt", "a", encoding="utf-8") as log_file:
             log_file.write(summary)

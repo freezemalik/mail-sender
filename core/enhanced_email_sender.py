@@ -5,8 +5,6 @@
 在基础邮件发送功能基础上增加了数据库记录和断点续传功能
 """
 
-import os
-import re
 import smtplib
 import socket
 import time
@@ -14,16 +12,12 @@ from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from jinja2 import Template
-
-from .database import EmailDatabase
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from config.config_manager import config_manager
+from .database import EmailDatabase
+from .email_sender import QQEmailSender
 
 
-class EnhancedQQEmailSender:
+class EnhancedQQEmailSender(QQEmailSender):
     def __init__(self):
         """
         使用配置管理器初始化增强版邮件发送器
@@ -31,6 +25,10 @@ class EnhancedQQEmailSender:
         # 获取邮件配置
         email_config = config_manager.get_email_config()
         
+        # 调用父类初始化方法
+        super().__init__()
+        
+        # 重写配置参数
         self.smtp_server = email_config['smtp_server']
         self.smtp_port = email_config['smtp_port']
         self.sender_email = email_config['sender_email']
@@ -53,68 +51,11 @@ class EnhancedQQEmailSender:
             raise ValueError("QQ号码应在6到13位之间")
         
         # 初始化日志文件
-        log_file_path = "logs/email_log.txt"
-        os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
-        if not os.path.exists(log_file_path):
-            with open(log_file_path, "w") as log_file:
-                log_file.write("邮件发送日志\n===============\n\n")
+        self._initialize_log_file()
 
-    def load_email_template(self, template_file='templates/email_template.html'):
-        """
-        加载HTML邮件模板
-        """
-        with open(template_file, 'r', encoding='utf-8') as f:
-            template_content = f.read()
-        return Template(template_content)
-
-    def validate_qq_email_format(self, qq_number):
-        """
-        验证QQ邮箱地址格式是否正确
-        QQ邮箱号码为5-11位数字（加上@qq.com后缀为完整的QQ邮箱）
-        """
-        # 检查QQ号是否符合格式（5-11位数字）
-        qq_str = str(qq_number)
-        if not re.match(r'^[1-9][0-9]{4,10}$', qq_str):
-            return False, "QQ号格式不正确，应为5-11位数字"
-        
-        return True, "QQ号格式正确"
-    
-    def verify_email_smtp(self, recipient_email):
-        """
-        通过SMTP连接初步验证邮箱是否存在
-        注意：这种方法并不完全可靠，某些邮件服务器可能会接受所有地址
-        大多数邮件服务器出于安全考虑禁用了VRFY命令
-        """
-        try:
-            # 创建SMTP连接
-            server = smtplib.SMTP(self.smtp_server, self.smtp_port, timeout=10)
-            server.set_debuglevel(0)
-            server.starttls()
-            server.login(self.sender_email, self.sender_password)
-            
-            # 尝试验证邮箱地址
-            # 注意：大多数公共邮件服务器禁用了VRFY命令
-            code, message = server.verify(recipient_email)
-            server.quit()
-            
-            # 如果服务器支持并确认邮箱存在
-            if code == 250:
-                return True, "邮箱验证成功"
-            elif code == 252:
-                # 服务器无法验证但接受消息
-                return True, "服务器无法验证但接受消息"
-            else:
-                return False, f"邮箱验证失败: {message.decode() if isinstance(message, bytes) else message}"
-        except smtplib.SMTPRecipientsRefused:
-            return False, "收件人被拒绝"
-        except smtplib.SMTPServerDisconnected:
-            return False, "SMTP服务器断开连接"
-        except Exception as e:
-            return False, f"验证过程中出错: {str(e)}"
-    
     def send_email(self, recipient_email, user_id):
         """
-        向指定收件人发送邮件
+        向指定收件人发送邮件（重写父类方法，增加数据库记录功能）
         """
         # 首先验证QQ邮箱格式
         qq_number = recipient_email.split('@')[0]
@@ -192,21 +133,10 @@ class EnhancedQQEmailSender:
             self.database.record_sent_email(qq_number, 'failed')
             self.log_email_status(recipient_email, False, error_msg)
             return False, error_msg
-
-    def log_email_status(self, email, success, message):
-        """
-        将邮件发送状态记录到文件
-        """
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        status = "成功" if success else "失败"
-        log_entry = f"[{timestamp}] [{status}] {email}: {message}\n"
-        
-        with open("logs/email_log.txt", "a", encoding="utf-8") as log_file:
-            log_file.write(log_entry)
     
     def send_bulk_emails(self):
         """
-        向一系列QQ邮箱地址发送邮件
+        向一系列QQ邮箱地址发送邮件（重写父类方法，增加跳过已发送邮件的处理）
         """
         print(f"开始批量发送邮件，从 {self.start_id} 到 {self.end_id}")
         successful_sends = 0

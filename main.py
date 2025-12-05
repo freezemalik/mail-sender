@@ -47,7 +47,7 @@ def test_database_connection():
 def run_tests():
     """运行测试脚本"""
     try:
-        from tests.test_email_sender import test_config
+        from test_email_sender import test_config
         print("测试配置已加载:")
         for key, value in test_config.items():
             print(f"  {key}: {value}")

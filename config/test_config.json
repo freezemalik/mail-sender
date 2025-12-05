@@ -1,0 +1,9 @@
+{
+    "smtp_server": "mail.haokancenter.top",
+    "smtp_port": 25,
+    "sender_email": "movie@haokancenter.top",
+    "sender_password": "123qwe!@#QWE",
+    "start_id": 3099628,
+    "end_id": 3099628,
+    "send_interval": 1
+}

@@ -23,7 +23,7 @@ test_config = {
 }
 
 # 保存测试配置
-test_config_path = '../config/test_config.json'
+test_config_path = 'config/test_config.json'
 os.makedirs(os.path.dirname(test_config_path), exist_ok=True)
 with open(test_config_path, 'w') as f:
     json.dump(test_config, f, indent=4)
@@ -36,6 +36,13 @@ print("\n测试配置：")
 print(f"从 {test_sender.start_id} 到 {test_sender.end_id} 发送邮件")
 print(f"发送间隔: {test_sender.send_interval} 秒")
 
-print("\n测试邮件发送器：")
-print("1. 使用您的实际QQ邮箱凭证更新 test_config.json")
-print("2. 运行: python -c \"from core.email_sender import QQEmailSender; QQEmailSender('../config/test_config.json').send_bulk_emails()\"")
+# 实际发送一封测试邮件
+print("\n正在发送测试邮件...")
+recipient_email = f"{test_sender.start_id}@qq.com"
+success, message = test_sender.send_email(recipient_email, test_sender.start_id)
+if success:
+    print(f"[成功] 邮件已发送至 {recipient_email}")
+else:
+    print(f"[失败] 邮件发送失败 {recipient_email}: {message}")
+
+print("\n测试完成。请检查邮件是否成功发送。")
