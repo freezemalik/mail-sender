@@ -65,7 +65,10 @@ class ConfigManager:
     
     def get_mysql_config(self):
         """获取MySQL配置"""
-        return self.db_config.get('mysql', {})
+        mysql_configs = self.db_config.get('mysql', {})
+        environment = self.db_config.get('environment', 'local')
+        return mysql_configs.get(environment, {}) 
+
     
     def get_sqlite_config(self):
         """获取SQLite配置"""

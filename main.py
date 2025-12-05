@@ -12,7 +12,7 @@ import os
 # 添加项目根目录到Python路径
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from scripts.run_enhanced_sender import main as run_enhanced_sender
+from run_enhanced_sender import main as run_enhanced_sender
 
 
 def show_menu():
@@ -29,7 +29,7 @@ def show_menu():
 def setup_database():
     """初始化数据库"""
     try:
-        from scripts.setup_database import create_database_and_table
+        from setup_database import create_database_and_table
         create_database_and_table()
     except Exception as e:
         print(f"数据库初始化失败: {e}")
@@ -38,7 +38,7 @@ def setup_database():
 def test_database_connection():
     """测试数据库连接"""
     try:
-        from scripts.setup_database import test_connection
+        from setup_database import test_connection
         test_connection()
     except Exception as e:
         print(f"数据库连接测试失败: {e}")

@@ -1,13 +1,23 @@
 {
+    "environment": "local",
     "type": "mysql",
     "sqlite": {
         "database_file": "../data/email_records.db"
     },
     "mysql": {
-        "host": "localhost",
-        "user": "email_system",
-        "password": "jxHACf2dEfMzRnYF",
-        "database": "email_system",
-        "charset": "utf8mb4"
+        "local": {
+            "host": "localhost",
+            "user": "root",
+            "password": "root",
+            "database": "email_system",
+            "charset": "utf8mb4"
+        },
+        "prod": {
+            "host": "localhost",
+            "user": "email_system",
+            "password": "jxHACf2dEfMzRnYF",
+            "database": "email_system",
+            "charset": "utf8mb4"
+        }
     }
 }

@@ -17,7 +17,10 @@ from email.mime.text import MIMEText
 from jinja2 import Template
 
 from .database import EmailDatabase
-from ..config.config_manager import config_manager
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from config.config_manager import config_manager
 
 
 class EnhancedQQEmailSender:
@@ -50,13 +53,13 @@ class EnhancedQQEmailSender:
             raise ValueError("QQ号码应在6到13位之间")
         
         # 初始化日志文件
-        log_file_path = "../data/email_log.txt"
+        log_file_path = "logs/email_log.txt"
         os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
         if not os.path.exists(log_file_path):
             with open(log_file_path, "w") as log_file:
                 log_file.write("邮件发送日志\n===============\n\n")
 
-    def load_email_template(self, template_file='../templates/email_template.html'):
+    def load_email_template(self, template_file='templates/email_template.html'):
         """
         加载HTML邮件模板
         """
@@ -198,7 +201,7 @@ class EnhancedQQEmailSender:
         status = "成功" if success else "失败"
         log_entry = f"[{timestamp}] [{status}] {email}: {message}\n"
         
-        with open("../data/email_log.txt", "a", encoding="utf-8") as log_file:
+        with open("logs/email_log.txt", "a", encoding="utf-8") as log_file:
             log_file.write(log_entry)
     
     def send_bulk_emails(self):
@@ -255,7 +258,7 @@ class EnhancedQQEmailSender:
         # 总结日志
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         summary = f"\n[{timestamp}] 总结: 总计={self.end_id - self.start_id + 1}, 成功={successful_sends}, 失败={failed_sends}, 跳过={skipped_emails}\n"
-        with open("../data/email_log.txt", "a", encoding="utf-8") as log_file:
+        with open("logs/email_log.txt", "a", encoding="utf-8") as log_file:
             log_file.write(summary)
         
         # 关闭数据库连接

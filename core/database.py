@@ -6,11 +6,14 @@
 """
 
 import os
+import sys
 import sqlite3
-
 import mysql.connector
 
-from ..config.config_manager import config_manager
+# 添加项目根目录到Python路径
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from config.config_manager import config_manager
 
 
 class EmailDatabase:
