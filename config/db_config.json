@@ -5,8 +5,8 @@
     },
     "mysql": {
         "host": "localhost",
-        "user": "root",
-        "password": "your_password",
+        "user": "email_system",
+        "password": "jxHACf2dEfMzRnYF",
         "database": "email_system",
         "charset": "utf8mb4"
     }
