@@ -16,7 +16,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from jinja2 import Template
-from database import EmailDatabase
+from .database import EmailDatabase
 from ..config.config_manager import config_manager
 
 
