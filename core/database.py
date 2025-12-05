@@ -5,13 +5,13 @@
 负责与数据库交互，记录邮件发送状态
 """
 
-import sqlite3
-import mysql.connector
-from datetime import datetime
 import os
-import sys
-sys.path.append('../config')
-from config_manager import config_manager
+import sqlite3
+
+import mysql.connector
+
+from ..config.config_manager import config_manager
+
 
 class EmailDatabase:
     def __init__(self):

@@ -5,7 +5,6 @@
 在基础邮件发送功能基础上增加了数据库记录和断点续传功能
 """
 
-import json
 import os
 import re
 import smtplib
@@ -16,6 +15,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from jinja2 import Template
+
 from .database import EmailDatabase
 from ..config.config_manager import config_manager
 
