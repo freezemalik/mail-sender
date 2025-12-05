@@ -1,5 +1,5 @@
 {
-    "environment": "local",
+    "environment": "prod",
     "type": "mysql",
     "sqlite": {
         "database_file": "../data/email_records.db"
