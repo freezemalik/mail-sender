@@ -1,0 +1,13 @@
+{
+    "type": "mysql",
+    "sqlite": {
+        "database_file": "../data/email_records.db"
+    },
+    "mysql": {
+        "host": "localhost",
+        "user": "root",
+        "password": "your_password",
+        "database": "email_system",
+        "charset": "utf8mb4"
+    }
+}
